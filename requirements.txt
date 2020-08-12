@@ -5,7 +5,7 @@ dj-database-url==0.5.0
 django-jenkins==0.110.0
 django-object-actions==2.0.0
 django-tinymce==2.8.0
-djangorestframework==3.11.0
+djangorestframework==3.11.1
 factory-boy==2.12.0
 PyPDF2==1.26.0
 requests==2.22.0
