@@ -3,7 +3,7 @@ bumpversion==0.5.3
 cx_Oracle==7.3.0
 dj-database-url==0.5.0
 django-jenkins==0.110.0
-django-object-actions==2.0.0
+django-object-actions==3.0.1
 django-tinymce==2.8.0
 djangorestframework==3.11.0
 factory-boy==2.12.0
