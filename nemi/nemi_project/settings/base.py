@@ -214,7 +214,7 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # Set up TinyMCE configuration
-TINYMCE_JS_URL = STATIC_URL + 'lib/tiny_mce/tiny_mce.js'
+TINYMCE_JS_URL = STATIC_URL + 'tiny_mce/tiny_mce.min.js'
 
 TINYMCE_DEFAULT_CONFIG = {
     'theme' : "advanced",
