@@ -87,6 +87,7 @@ class AnalyteCodeRelAdmin(admin.TabularInline):
 class AnalyteRefAdmin(AbstractReferenceAdmin):
     inlines = (AnalyteCodeRelAdmin,)
     list_display = ('analyte_code', 'analyte_type', 'analyte_cbr')
+    search_fields = ('analyte_code', 'analyte_type')
     fieldsets = (
         (None, {
             'fields': (

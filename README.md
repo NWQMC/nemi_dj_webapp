@@ -37,11 +37,12 @@ Create a virtualenv and install the python dependencies:
 The style sheets must be built as well. In order to build the style sheets from Sass. You must have
 the compass Gem installed as follows:
 ```
+% cd nemi/compass
 % gem install -i Gem compass -v 0.12.7
 ```
 To build the style sheets execute:
 ```
-% cd nemi/compass
+% cd nemi/compass (if not there already)
 % ./compass.sh compile
 ```
 
