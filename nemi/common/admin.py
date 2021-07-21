@@ -7,10 +7,17 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import connection
 from django.db.models import Case, CharField, Count, Q, Value, When
 from django.forms.models import BaseInlineFormSet
+#Alice added django.forms import Form, Filefield and views
+from django.forms import ModelForm, FileField, Form
+from django.views.generic import View
 from django.http import HttpResponseRedirect
 from django.template.defaultfilters import slugify
 from django.urls import reverse
+from django.urls import path
+from django.shortcuts import render
 import PyPDF2
+import io
+from .models import AnalyteMethodJn
 
 from django_object_actions import (
     DjangoObjectActions, takes_instance_or_queryset)
@@ -545,7 +552,7 @@ class MethodOnlineAdmin(DjangoObjectActions, AbstractEditableMethodAdmin):
 
     list_filter = AbstractEditableMethodAdmin.list_filter
     inlines = (AnalyteMethodOnlineAdmin, RevisionOnlineAdmin)
-    actions = ('submit_for_review',)
+    actions = ('submit_for_review','analyte_bulk_load',)
     change_actions = actions
     fieldsets = (
         ('Submission-Specific Fields', {
@@ -610,6 +617,17 @@ class MethodOnlineAdmin(DjangoObjectActions, AbstractEditableMethodAdmin):
     submit_for_review.label = 'Submit for review'
     submit_for_review.short_description = 'Submit method for review'
 
+    def analyte_bulk_load(self, request, queryset):
+
+        # Redirect to analyte bulk loading page.
+        return HttpResponseRedirect(
+            'method_admin:upload_csv'
+        )
+
+    analyte_bulk_load.label = 'Bulk upload Analytes'
+    analyte_bulk_load.short_description = 'Redirect to page for uploading multiple analyte records'
+
+
     def save_model(self, request, obj, form, change):
         # If adding a new instance, set `insert_person_name` to current user.
         if not change:
@@ -622,6 +640,36 @@ class MethodOnlineAdmin(DjangoObjectActions, AbstractEditableMethodAdmin):
             return ()
         return super(MethodOnlineAdmin, self).get_readonly_fields(request, obj=obj)
 
+    def get_urls(self):
+        urls = super().get_urls()
+        new_urls = [path('upload_csv/', self.upload_csv),]
+        return new_urls + urls
+
+    def upload_csv(self, request):
+
+        if request.method == "POST":
+            print("action is post")
+            csv_file = request.FILES["csv_upload"]
+
+            file_data = csv_file.read().decode("utf-8")
+            #csv_data = file_data.split("\n")
+            csv_data = io.StringIO(file_data)
+
+            for x in csv_data:
+                fields = x.split(",")
+                print(repr(fields))
+                print(fields[0],fields[1])
+                created = AnalyteMethodJn.objects.update_or_create(
+                    analyte_method_id = 99999985740,
+                    method_id = 4827,
+                    analyte_id = 18178,
+                    dl_value = 0.02,
+                    dl_units = 'pH',
+                    )
+
+        form = csv_import_form()
+        data = {"form": form}
+        return render(request, "admin/bulk_upload.html", data)
 
 class MethodStgAdmin(DjangoObjectActions, AbstractEditableMethodAdmin):
     class Meta:
@@ -792,6 +840,11 @@ class ProtocolSourceCitationAdmin(DjangoObjectActions, admin.ModelAdmin):
     def has_delete_permission(self, request, *args, **kwargs):
         return False
 
+      #copy pasted for bulk loading code
+
+    # end of copy paste for bulk loading code
+class csv_import_form(Form):
+    csv_upload = forms.FileField()
 
 method_admin.register(models.MethodOnline, MethodOnlineAdmin)
 method_admin.register(models.MethodStg, MethodStgAdmin)
